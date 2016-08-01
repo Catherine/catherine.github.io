@@ -108,6 +108,9 @@
 	        };
 	    },
 
+	    // React docs mentioned putting data loading in function called componentDidMount.
+	    // Not sure if that is a rule or suggestion. Will leave this as is for now but look
+	    // into the other pattern further 
 	    _makeSearch: function _makeSearch(queryParams) {
 	        $.ajax({
 	            url: 'https://api.hotwire.com/v1/search/car',
@@ -606,7 +609,7 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'card-image waves-effect waves-block waves-light' },
-	                    _react2.default.createElement('img', { className: 'activator', src: 'http://placekitten.com/500/375' })
+	                    _react2.default.createElement('img', { className: 'activator', src: 'https://placekitten.com/500/375' })
 	                ),
 	                _react2.default.createElement(
 	                    'div',
