@@ -216,7 +216,7 @@
 	                            null,
 	                            'Where do you want to visit?'
 	                        ),
-	                        _react2.default.createElement('input', { placeholder: 'BOS // Boston // Boston, MA', type: 'text', ref: 'formLocation', value: 'BOS', required: true })
+	                        _react2.default.createElement('input', { placeholder: 'i.e. BOS // Boston // Boston, MA', type: 'text', ref: 'formLocation', required: true })
 	                    )
 	                ),
 	                _react2.default.createElement(
