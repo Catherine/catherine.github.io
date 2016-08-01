@@ -56,6 +56,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	// Main Component
 	var App = _react2.default.createClass({
 	    displayName: 'App',
 	    render: function render() {
@@ -85,8 +86,8 @@
 	                        null,
 	                        _react2.default.createElement(
 	                            'a',
-	                            { href: 'http://www.github.com/catherine' },
-	                            'github.com/catherine'
+	                            { href: 'https://github.com/Catherine/react-rental-car' },
+	                            'View code on Github'
 	                        )
 	                    )
 	                )
@@ -95,12 +96,11 @@
 	    }
 	});
 
-	//will house body of application - data acquisition and other components
+	// Houses body of application - data acquisition and other components
 	var CarSearch = _react2.default.createClass({
 	    displayName: 'CarSearch',
 
 
-	    //need to set this so that I can fill with API response data
 	    getInitialState: function getInitialState() {
 	        return {
 	            cars: [],
@@ -109,7 +109,6 @@
 	    },
 
 	    _makeSearch: function _makeSearch(queryParams) {
-
 	        $.ajax({
 	            url: 'https://api.hotwire.com/v1/search/car',
 	            dataType: 'jsonp',
@@ -152,12 +151,7 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'row' },
-	                    this.state.cars.map(this._carResult),
-	                    _react2.default.createElement(
-	                        'pre',
-	                        null,
-	                        JSON.stringify(this.state, null, 2)
-	                    )
+	                    this.state.cars.map(this._carResult)
 	                )
 	            )
 	        );
@@ -182,8 +176,6 @@
 	            apikey: '35cd3x7nbm889ymxtx52x4fx'
 	        };
 
-	        console.log(this.refs.formPickUpTime.value);
-
 	        this.props.makeSearch(queryParams);
 	    },
 
@@ -195,7 +187,7 @@
 	    // the last couple months... Not using external date lib for
 	    // this project at the moment, so did by hand.
 	    _makeUSAdate: function _makeUSAdate(normalDate) {
-	        console.log(normalDate);
+
 	        var d = new Date(normalDate);
 
 	        var dateMonth = d.getMonth() + 1;
@@ -203,13 +195,7 @@
 
 	        var reorderedDate = (dateMonth > 9 ? "" + dateMonth : "0" + dateMonth) + '/' + (dateDay > 9 ? "" + dateDay : "0" + dateDay) + '/' + d.getFullYear();
 
-	        console.log(reorderedDate);
-
 	        return reorderedDate;
-	    },
-
-	    _functionA: function _functionA() {
-	        alert('test');
 	    },
 
 	    render: function render() {
@@ -544,11 +530,19 @@
 	                            { id: 'submit', className: 'btn waves-effect waves-light', type: 'submit', name: 'action' },
 	                            'SEARCH!'
 	                        )
-	                    ),
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row' },
 	                    _react2.default.createElement(
-	                        'p',
-	                        null,
-	                        'Note: Listing images my not reflect the actual car.'
+	                        'div',
+	                        { className: 'col offset-s3' },
+	                        _react2.default.createElement(
+	                            'p',
+	                            { className: 'light' },
+	                            'Note: Listing images may differ from available car.'
+	                        )
 	                    )
 	                )
 	            )
@@ -556,7 +550,7 @@
 	    }
 	});
 
-	//this will represent a single car
+	//Component for a single car listing
 	var AvailableCar = _react2.default.createClass({
 	    displayName: 'AvailableCar',
 
