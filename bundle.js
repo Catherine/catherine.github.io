@@ -62,7 +62,641 @@
 	        return _react2.default.createElement(
 	            'div',
 	            null,
-	            'Application will be built here'
+	            _react2.default.createElement(Header, null),
+	            _react2.default.createElement(CarSearch, null)
+	        );
+	    }
+	});
+
+	var Header = _react2.default.createClass({
+	    displayName: 'Header',
+	    render: function render() {
+	        return _react2.default.createElement(
+	            'nav',
+	            { className: 'teal lighten-1', role: 'navigation' },
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'nav-wrapper container' },
+	                _react2.default.createElement(
+	                    'ul',
+	                    { className: '' },
+	                    _react2.default.createElement(
+	                        'li',
+	                        null,
+	                        _react2.default.createElement(
+	                            'a',
+	                            { href: 'http://www.github.com/catherine' },
+	                            'github.com/catherine'
+	                        )
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+
+	//will house body of application - data acquisition and other components
+	var CarSearch = _react2.default.createClass({
+	    displayName: 'CarSearch',
+
+
+	    //need to set this so that I can fill with API response data
+	    getInitialState: function getInitialState() {
+	        return {
+	            cars: [],
+	            status: ""
+	        };
+	    },
+
+	    _makeSearch: function _makeSearch(queryParams) {
+
+	        $.ajax({
+	            url: 'https://api.hotwire.com/v1/search/car',
+	            dataType: 'jsonp',
+	            crossDomain: true,
+	            data: queryParams }).done(function (data) {
+	            this.setState({ cars: data["Result"], status: data["StatusDesc"] });
+	        }.bind(this));
+	    },
+
+	    _carResult: function _carResult(i) {
+	        return _react2.default.createElement(
+	            'div',
+	            { className: '', key: i["ResultId"] },
+	            _react2.default.createElement(AvailableCar, { carDetails: i })
+	        );
+	    },
+
+	    render: function render() {
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'section no-pad-bot', id: 'index-banner' },
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'container' },
+	                _react2.default.createElement(
+	                    'h3',
+	                    { className: 'header center teal-text lighten-2', style: { marginBottom: 0 } },
+	                    'CarSearch'
+	                ),
+	                _react2.default.createElement(
+	                    'p',
+	                    { className: 'header col s12 light center', style: { marginTop: 0, marginBottom: 40 } },
+	                    'Car Rental Searching Simplified'
+	                ),
+	                _react2.default.createElement(CarSelectForm, { makeSearch: this._makeSearch })
+	            ),
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'container' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row' },
+	                    this.state.cars.map(this._carResult),
+	                    _react2.default.createElement(
+	                        'pre',
+	                        null,
+	                        JSON.stringify(this.state, null, 2)
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+
+	var CarSelectForm = _react2.default.createClass({
+	    displayName: 'CarSelectForm',
+
+
+	    // Gathers user inputs for GET
+	    _submitForm: function _submitForm(event) {
+	        event.preventDefault();
+
+	        var queryParams = {
+	            dest: this.refs.formLocation.value,
+	            startdate: this._makeUSAdate(this.refs.formPickUpDate.value),
+	            enddate: this._makeUSAdate(this.refs.formDropOffDate.value),
+	            pickuptime: this.refs.formPickUpTime.value,
+	            dropofftime: this.refs.formDropOffTime.value,
+	            format: 'jsonp',
+	            apikey: '35cd3x7nbm889ymxtx52x4fx'
+	        };
+
+	        console.log(this.refs.formPickUpTime.value);
+
+	        this.props.makeSearch(queryParams);
+	    },
+
+	    // Hotwire's API wasn't flexible with accepted date formats.
+	    // Always have to be passed mm/dd/yyyy -- expected it to be a
+	    // bit more flexible seeing as their location param was much 
+	    // more accepting. I got a lot of error responses thanks to 
+	    // getting used to writing dates dd/mm/yyyy while traveling 
+	    // the last couple months... Not using external date lib for
+	    // this project at the moment, so did by hand.
+	    _makeUSAdate: function _makeUSAdate(normalDate) {
+	        console.log(normalDate);
+	        var d = new Date(normalDate);
+
+	        var dateMonth = d.getMonth() + 1;
+	        var dateDay = d.getDate();
+
+	        var reorderedDate = (dateMonth > 9 ? "" + dateMonth : "0" + dateMonth) + '/' + (dateDay > 9 ? "" + dateDay : "0" + dateDay) + '/' + d.getFullYear();
+
+	        console.log(reorderedDate);
+
+	        return reorderedDate;
+	    },
+
+	    _functionA: function _functionA() {
+	        alert('test');
+	    },
+
+	    render: function render() {
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'row' },
+	            _react2.default.createElement(
+	                'form',
+	                { className: 'col s12', ref: 'searchForm', onSubmit: this._submitForm },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'input-field col s6 offset-s3' },
+	                        _react2.default.createElement(
+	                            'label',
+	                            null,
+	                            'Where do you want to visit?'
+	                        ),
+	                        _react2.default.createElement('input', { placeholder: 'BOS // Boston // Boston, MA', type: 'text', ref: 'formLocation', value: 'BOS', required: true })
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row', style: { marginBottom: 0 } },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col s3 offset-s3' },
+	                        _react2.default.createElement(
+	                            'label',
+	                            null,
+	                            'Pick Up Time and Date'
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'input-field col s3 offset-s3' },
+	                        _react2.default.createElement(
+	                            'select',
+	                            { className: 'browser-default', id: 'form_pickup_time', ref: 'formPickUpTime', required: true },
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '0:00' },
+	                                'Midnight'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '1:00' },
+	                                '1:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '2:00' },
+	                                '2:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '3:00' },
+	                                '3:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '4:00' },
+	                                '4:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '5:00' },
+	                                '5:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '6:00' },
+	                                '6:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '7:00' },
+	                                '7:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '8:00' },
+	                                '8:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '9:00' },
+	                                '9:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '10:00' },
+	                                '10:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '11:00' },
+	                                '11:00'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '12:00' },
+	                                'Noon'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '13:00' },
+	                                '1:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '14:00' },
+	                                '2:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '15:00' },
+	                                '3:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '16:00' },
+	                                '4:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '17:00' },
+	                                '5:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '18:00' },
+	                                '6:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '19:00' },
+	                                '7:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '20:00' },
+	                                '8:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '21:00' },
+	                                '9:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '22:00' },
+	                                '10:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '23:00' },
+	                                '11:00pm'
+	                            )
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'input-field col s3' },
+	                        _react2.default.createElement('input', { id: 'form_pickup_date', type: 'date', ref: 'formPickUpDate', required: true })
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row', style: { marginBottom: 0 } },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col s3 offset-s3' },
+	                        _react2.default.createElement(
+	                            'label',
+	                            null,
+	                            'Return Time and Date'
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'input-field col s3 offset-s3' },
+	                        _react2.default.createElement(
+	                            'select',
+	                            { className: 'browser-default', id: 'form_dropoff_time', ref: 'formDropOffTime', required: true },
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '0:00' },
+	                                'Midnight'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '1:00' },
+	                                '1:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '2:00' },
+	                                '2:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '3:00' },
+	                                '3:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '4:00' },
+	                                '4:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '5:00' },
+	                                '5:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '6:00' },
+	                                '6:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '7:00' },
+	                                '7:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '8:00' },
+	                                '8:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '9:00' },
+	                                '9:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '10:00' },
+	                                '10:00am'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '11:00' },
+	                                '11:00'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '12:00' },
+	                                'Noon'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '13:00' },
+	                                '1:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '14:00' },
+	                                '2:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '15:00' },
+	                                '3:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '16:00' },
+	                                '4:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '17:00' },
+	                                '5:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '18:00' },
+	                                '6:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '19:00' },
+	                                '7:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '20:00' },
+	                                '8:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '21:00' },
+	                                '9:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '22:00' },
+	                                '10:00pm'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: '23:00' },
+	                                '11:00pm'
+	                            )
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'input-field col s3' },
+	                        _react2.default.createElement('input', { id: 'form_dropoff_date', type: 'date', ref: 'formDropOffDate', required: true })
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col offset-s3' },
+	                        _react2.default.createElement(
+	                            'button',
+	                            { id: 'submit', className: 'btn waves-effect waves-light', type: 'submit', name: 'action' },
+	                            'SEARCH!'
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'p',
+	                        null,
+	                        'Note: Listing images my not reflect the actual car.'
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+
+	//this will represent a single car
+	var AvailableCar = _react2.default.createClass({
+	    displayName: 'AvailableCar',
+
+
+	    _carType: function _carType(code) {
+	        var carType = "";
+	        switch (code) {
+	            case "ECAR":
+	                return "Economy Car";
+	            case "CCAR":
+	                return "Compact Car";
+	            case "FCAR":
+	                return "Full-size Car";
+	            case "FFAR":
+	                return "Full-size SUV";
+	            case "FRAR":
+	                return "Full-size SUV";
+	            case "ICAR":
+	                return "Mid-size Car";
+	            case "LCAR":
+	                return "Luxury Car";
+	            case "MVAR":
+	                return "Minivan";
+	            case "PCAR":
+	                return "Premium Car";
+	            case "SCAR":
+	                return "Standard Car";
+	            case "SFAR":
+	                return "Standard SUV";
+	            case "SPAR":
+	                return "Pickup Truck";
+	            case "STAR":
+	                return "Convertible Car";
+	            case "SXAR":
+	                return "Special Car";
+	            case "XXAR":
+	                return "Special Car";
+	            default:
+	                return "Type Unavailable";
+	        }
+	    },
+
+	    render: function render() {
+
+	        var carType = this._carType(this.props.carDetails["CarTypeCode"]);
+
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'col s4' },
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'card' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'card-image waves-effect waves-block waves-light' },
+	                    _react2.default.createElement('img', { className: 'activator', src: 'http://placekitten.com/500/375' })
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'card-content' },
+	                    _react2.default.createElement(
+	                        'span',
+	                        { className: 'card-title activator grey-text text-darken-4' },
+	                        carType,
+	                        _react2.default.createElement(
+	                            'i',
+	                            { className: 'material-icons right' },
+	                            'more_vert'
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'p',
+	                        null,
+	                        _react2.default.createElement(
+	                            'a',
+	                            null,
+	                            this.props.carDetails["DailyRate"],
+	                            ' a day',
+	                            _react2.default.createElement('br', null)
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'card-reveal' },
+	                    _react2.default.createElement(
+	                        'span',
+	                        { className: 'card-title grey-text text-darken-4' },
+	                        carType,
+	                        _react2.default.createElement(
+	                            'i',
+	                            { className: 'material-icons right' },
+	                            'close'
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'p',
+	                        null,
+	                        _react2.default.createElement(
+	                            'b',
+	                            null,
+	                            'Location:'
+	                        ),
+	                        ' ',
+	                        this.props.carDetails["LocationDescription"],
+	                        _react2.default.createElement('br', null),
+	                        _react2.default.createElement(
+	                            'b',
+	                            null,
+	                            'Mileage Limit:'
+	                        ),
+	                        ' ',
+	                        this.props.carDetails["MileageDescription"],
+	                        _react2.default.createElement('br', null),
+	                        _react2.default.createElement(
+	                            'b',
+	                            null,
+	                            'Daily Rate:'
+	                        ),
+	                        ' ',
+	                        this.props.carDetails["DailyRate"],
+	                        _react2.default.createElement('br', null),
+	                        _react2.default.createElement(
+	                            'b',
+	                            null,
+	                            'Taxes/Fees:'
+	                        ),
+	                        ' ',
+	                        this.props.carDetails["TaxesAndFees"],
+	                        _react2.default.createElement('br', null),
+	                        _react2.default.createElement(
+	                            'b',
+	                            null,
+	                            'Total Price:'
+	                        ),
+	                        ' ',
+	                        this.props.carDetails["TotalPrice"]
+	                    )
+	                )
+	            )
 	        );
 	    }
 	});
